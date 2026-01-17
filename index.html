@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dawn - The Global Mood Journal</title>
-    <meta name="description" content="Share your day in 140 words. Track your mood. Read the global diary.">
-    <link rel="icon" type="image/png" href="favicon.png"> 
+    <meta name="description" content="Share your day in 140 characters. Track your mood. Read the global diary.">
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         :root {
             --paper: #e6e2d3;
@@ -22,8 +22,24 @@
             background-color: var(--paper);
             color: var(--ink);
             overflow-x: hidden;
-            /* Subtle paper texture */
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZTZlMmQzIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNkOWNiYjgiLz4KPC9zdmc+');
+        }
+
+        /* HEADER & LOGO */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
         }
 
         h1, h2, h3 { font-weight: normal; letter-spacing: 2px; text-transform: uppercase; }
@@ -86,10 +102,12 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         .btn-download:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-        /* LIVE STATS */
         .stats-bar {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -103,7 +121,6 @@
             font-size: 0.9rem;
         }
 
-        /* CONTENT */
         .section { padding: 80px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; margin-top: 50px; }
         
@@ -117,34 +134,110 @@
         .card:hover { transform: translateY(-5px); }
         .card-icon { font-size: 40px; margin-bottom: 20px; display: block; }
         
-        /* New Feed Simulation Style */
-        .feed-preview {
-            background: #f9f9f9;
-            border-left: 4px solid var(--dawn-light);
-            padding: 15px;
-            text-align: left;
-            font-style: italic;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #666;
+        .feed-container { max-width: 700px; margin: 50px auto; padding: 0 20px; }
+        .feed-entry {
+            background: white; padding: 20px 25px; margin-bottom: 15px;
+            border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid #ddd; text-align: left; transition: all 0.3s ease;
         }
-
+        .feed-entry:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .feed-entry.happy { border-left-color: #FFD93D; }
+        .feed-entry.sad { border-left-color: #6C757D; }
+        .feed-entry-text { font-size: 1rem; line-height: 1.6; color: #333; font-style: italic; margin-bottom: 10px; }
+        .feed-entry-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #999; }
+        
+        .mood-badge { padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .mood-badge.happy { background: #FFF9E6; color: #F39C12; }
+        .mood-badge.sad { background: #F0F0F0; color: #6C757D; }
+        
+        .how-it-works {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 80px 20px;
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .how-it-works h2 { color: white; position: relative; z-index: 1; }
+        .how-it-works p { color: rgba(255,255,255,0.85); position: relative; z-index: 1; }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, background 0.3s;
+        }
+        
+        .step:hover { transform: translateY(-5px); background: rgba(255,255,255,0.1); }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--night);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .step h3 { font-size: 1.1rem; margin: 10px 0; color: white; }
+        .step p { color: rgba(255,255,255,0.85); font-size: 0.95rem; }
+        
         footer { background: var(--ink); color: white; padding: 50px 20px; text-align: center; margin-top: 50px; }
         footer a { color: rgba(255,255,255,0.6); text-decoration: none; margin: 0 15px; font-size: 0.9rem; transition: color 0.2s;}
         footer a:hover { color: white; }
 
         @media(max-width: 600px) {
             .hero h1 { font-size: 3rem; }
+            header { justify-content: center; }
         }
     </style>
 </head>
 <body>
 
+    <header>
+        <a href="#" class="logo-container">
+            <img src="dawn_header_logo.png" alt="Dawn" style="height: 50px;">
+        </a>
+    </header>
+
     <div class="hero">
         <div class="sky-bg"></div>
         <div class="sun-glyph"></div>
         <h1>Dawn</h1>
-        <p>The sun rises on a new page. Share your day in 140 words.</p>
+        <p>The sun rises on a new page. Share your day in 140 characters.</p>
 
         <div class="stats-bar">
             <span>☀ 4,201 Happy</span>
@@ -152,7 +245,11 @@
             <span>🌧 3,892 Sad</span>
         </div>
 
-        <a href="#" class="btn-download">Download for iOS</a>
+        <a href="#" class="btn-download">📱 Download for iOS</a>
+
+        <p style="margin-top: 30px; font-size: 0.95rem; font-style: italic; opacity: 0.8;">
+            "Even the darkest night will end and the sun will rise." — Victor Hugo
+        </p>
     </div>
 
     <div class="section">
@@ -163,17 +260,13 @@
             <div class="card">
                 <span class="card-icon">✒️</span>
                 <h3>Micro Journaling</h3>
-                <p>140 words. No pressure. Capture the essence of your day and tag it as <strong>Happy</strong> or <strong>Sad</strong>.</p>
+                <p>140 characters. No pressure. Capture the essence of your day and tag it as <strong>Happy ☀</strong> or <strong>Sad 🌧</strong>.</p>
             </div>
 
             <div class="card">
                 <span class="card-icon">🌍</span>
                 <h3>The Global Feed</h3>
                 <p>Read anonymous entries from around the world. Find comfort in knowing you aren't alone.</p>
-                <div class="feed-preview">
-                    "Finally got the promotion I worked so hard for. The coffee tastes better today." <br>
-                    <small>— Anonymous, 2m ago (☀ Happy)</small>
-                </div>
             </div>
 
             <div class="card">
@@ -184,21 +277,60 @@
         </div>
     </div>
 
-    <div class="section" style="background: white; width: 100%; max-width: none;">
-        <div style="max-width: 600px; margin: 0 auto;">
-            <p style="font-size: 1.5rem; font-style: italic; color: var(--ink);">
-                "Even the darkest night will end and the sun will rise."
-            </p>
-            <p>— Victor Hugo</p>
+    <div class="section" style="background: #f8f9fa; width: 100%; max-width: none;">
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <h2>See What Others Are Sharing</h2>
+            <p style="color: #999; font-size: 0.9rem; font-style: italic; margin-bottom: 30px;">Preview: Example entries to show how the global feed works</p>
+            <div class="feed-container">
+                <div class="feed-entry happy">
+                    <div class="feed-entry-text">"Finally got the promotion I worked so hard for. The coffee tastes better today."</div>
+                    <div class="feed-entry-meta"><span>Anonymous · Tokyo</span><span class="mood-badge happy">☀ Happy</span></div>
+                </div>
+                <div class="feed-entry sad">
+                    <div class="feed-entry-text">"Third rejection email this week. Starting to question everything. But I made my favorite pasta tonight."</div>
+                    <div class="feed-entry-meta"><span>Anonymous · New York</span><span class="mood-badge sad">🌧 Sad</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="how-it-works">
+        <h2>How Dawn Works</h2>
+        <p>Three simple steps to connect with the world</p>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Write</h3>
+                <p>Capture your day in 140 characters or less. No pressure, just honesty.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Choose</h3>
+                <p>Tag your entry as Happy ☀ or Sad 🌧 to reflect your current mood.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Share</h3>
+                <p>Post anonymously to the global feed and read what others are experiencing.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Connect</h3>
+                <p>Discover you're not alone. Find comfort in the shared human experience.</p>
+            </div>
         </div>
     </div>
 
     <footer>
         <h3>Dawn</h3>
-        <p>© 2024 Dawn Journal. All rights reserved.</p>
+        <p>© 2026 Dawn Journal. All rights reserved.</p>
         <br>
         <div id="legal">
-            <a href="mailto:support@yourdomain.com">Support</a>
+            <a href="mailto:support@dawnapp.com">Contact Support</a>
             <a href="privacy.html">Privacy Policy</a>
             <a href="terms.html">Terms of Service</a>
         </div>
