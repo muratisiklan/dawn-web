@@ -13,6 +13,8 @@
             --gold: #d4af37;
             --night: #1a1a1a;
             --dawn-light: #FF9F43;
+            --happy: #FFD93D;
+            --sad: #bdc3c7;
         }
 
         body {
@@ -90,6 +92,7 @@
         .hero h1 { font-size: 4rem; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .hero p { color: rgba(255,255,255,0.9); font-size: 1.3rem; margin-top: 10px; max-width: 600px; padding: 0 20px; }
 
+        /* --- RESTORED DOWNLOAD BUTTON STYLES --- */
         .btn-download {
             margin-top: 40px;
             padding: 15px 40px;
@@ -108,19 +111,46 @@
         }
         .btn-download:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
+        /* --- INTERACTIVE STATS --- */
         .stats-bar {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
-            padding: 10px 30px;
+            padding: 8px 25px;
             border-radius: 30px;
             margin-top: 30px;
             border: 1px solid rgba(255,255,255,0.2);
             font-family: monospace;
             display: flex;
-            gap: 20px;
-            font-size: 0.9rem;
+            gap: 15px;
+            font-size: 1rem;
+            align-items: center;
         }
 
+        .stats-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 1rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); color: white; transform: translateY(-1px); }
+        .stats-btn:active:not(:disabled) { transform: translateY(0); }
+        .stats-btn:disabled { opacity: 0.7; cursor: default; }
+        
+        .stats-btn.voted-happy { color: var(--happy) !important; font-weight: bold; text-shadow: 0 0 10px rgba(255, 217, 61, 0.3); }
+        .stats-btn.voted-sad { color: var(--sad) !important; font-weight: bold; }
+
+        .divider { opacity: 0.3; }
+
+        /* GENERAL SECTIONS */
         .section { padding: 80px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; margin-top: 50px; }
         
@@ -240,9 +270,13 @@
         <p>The sun rises on a new page. Share your day in 140 characters.</p>
 
         <div class="stats-bar">
-            <span>☀ 4,201 Happy</span>
-            <span>|</span>
-            <span>🌧 3,892 Sad</span>
+            <button id="btnHappy" class="stats-btn" onclick="vote('happy')">
+                ☀ <span id="countHappy">4,201</span> Happy
+            </button>
+            <span class="divider">|</span>
+            <button id="btnSad" class="stats-btn" onclick="vote('sad')">
+                🌧 <span id="countSad">3,892</span> Sad
+            </button>
         </div>
 
         <a href="#" class="btn-download">📱 Download for iOS</a>
@@ -335,6 +369,70 @@
             <a href="terms.html">Terms of Service</a>
         </div>
     </footer>
+
+    <script>
+        // --- MOOD COUNTER LOGIC (Client-Side Only) ---
+        
+        // Initial "Global" stats (Fake baselines for the MVP)
+        const BASE_HAPPY = 4201;
+        const BASE_SAD = 3892;
+
+        function initStats() {
+            const userVote = localStorage.getItem('dawn_user_vote'); // 'happy' or 'sad' or null
+            
+            // If user previously voted, update the counts visually to include them
+            if (userVote) {
+                updateUI(userVote, true);
+            }
+        }
+
+        function vote(mood) {
+            if (localStorage.getItem('dawn_user_vote')) return; // Block double voting
+
+            // 1. Save to local storage
+            localStorage.setItem('dawn_user_vote', mood);
+
+            // 2. Update UI
+            updateUI(mood, false);
+
+            console.log("Vote cast for:", mood);
+        }
+
+        function updateUI(votedMood, isInitialLoad) {
+            const btnHappy = document.getElementById('btnHappy');
+            const btnSad = document.getElementById('btnSad');
+            const countHappy = document.getElementById('countHappy');
+            const countSad = document.getElementById('countSad');
+
+            // Disable buttons
+            btnHappy.disabled = true;
+            btnSad.disabled = true;
+
+            // Highlight the selection
+            if (votedMood === 'happy') {
+                btnHappy.classList.add('voted-happy');
+                let val = parseInt(countHappy.innerText.replace(/,/g, ''));
+                if (!isInitialLoad || (isInitialLoad && !hasUserAlreadyCountedLocally())) {
+                   countHappy.innerText = (BASE_HAPPY + 1).toLocaleString();
+                }
+            } else {
+                btnSad.classList.add('voted-sad');
+                let val = parseInt(countSad.innerText.replace(/,/g, ''));
+                if (!isInitialLoad || (isInitialLoad && !hasUserAlreadyCountedLocally())) {
+                   countSad.innerText = (BASE_SAD + 1).toLocaleString();
+                }
+            }
+        }
+        
+        function hasUserAlreadyCountedLocally() {
+            // Since there's no server, the base HTML always resets. 
+            // We always want to add +1 to the base number if the user has voted.
+            return false; 
+        }
+
+        // Run on load
+        initStats();
+    </script>
 
 </body>
 </html>
