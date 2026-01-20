@@ -40,3 +40,5 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+# Private Tools
+asset_generator_from_icon.html
