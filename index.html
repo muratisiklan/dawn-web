@@ -111,6 +111,33 @@
         }
         .btn-download:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
+        .app-store-badge {
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .app-store-badge img {
+            height: 56px;
+            width: auto;
+            display: block;
+        }
+
+        .app-store-fallback {
+            display: none;
+            padding: 15px 40px;
+            background: white;
+            color: var(--ink);
+            border-radius: 50px;
+            font-weight: bold;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .app-store-badge.is-fallback img { display: none; }
+        .app-store-badge.is-fallback .app-store-fallback { display: inline-flex; }
+
         /* INTERACTIVE STATS */
         .stats-bar {
             background: rgba(255,255,255,0.1);
@@ -279,7 +306,10 @@
             </button>
         </div>
 
-        <a href="#" class="btn-download">📱 Download for iOS</a>
+        <a href="https://apps.apple.com/app/dawn-daily-prayers-journal/id6758056919" class="btn-download app-store-badge" target="_blank" rel="noopener" aria-label="Download Dawn on the App Store">
+            <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" onerror="this.closest('a').classList.add('is-fallback');">
+            <span class="app-store-fallback">Download for iOS</span>
+        </a>
 
         <p style="margin-top: 30px; font-size: 0.95rem; font-style: italic; opacity: 0.8;">
             "Even the darkest night will end and the sun will rise." — Victor Hugo
